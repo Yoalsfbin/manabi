@@ -2,7 +2,8 @@ name: Daily Learning Checklist
 
 on:
   schedule:
-    - cron: '0 0 * * *' # JST 9時に実行（UTC 0時）
+    # 毎日 JST 9時（UTC 0時）に実行
+    - cron: '0 0 * * *' 
   workflow_dispatch:
 
 permissions:
@@ -11,13 +12,22 @@ permissions:
 jobs:
   today-todo:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - run: pip install PyGithub
-      - run: python .github/scripts/create_today_issue.py
+
+      - name: Install dependencies
+        run: pip install PyGithub
+
+      - name: Run script to create today's issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
+          GITHUB_USER_TO_MENTION: ${{ secrets.USER_TO_MENTION }}
+        run: python .github/scripts/create_today_issue.py
