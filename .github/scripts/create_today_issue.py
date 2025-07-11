@@ -8,8 +8,8 @@ repo = g.get_repo(os.environ["REPO"])
 JST = timezone(timedelta(hours=9))
 today_str = datetime.now(JST).strftime("%Y-%m-%d")
 
-# メンションするユーザー名（例: @yokoyamayoshiki）
-USERNAME = os.environ.get("GITHUB_USER_TO_MENTION", "")
+# 自分にメンション
+USERNAME = os.environ.get("USER_TO_MENTION", "")
 
 # 今日の日付を含む復習Issueを探す
 issues = repo.get_issues(state='open', labels=['復習'])
