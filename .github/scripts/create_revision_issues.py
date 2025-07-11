@@ -7,6 +7,8 @@ REPO_NAME = os.environ["REPO"]
 GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
 repo = Github(GITHUB_TOKEN).get_repo(REPO_NAME)
 
+USERNAME = os.environ.get("USER_TO_MENTION", "")
+
 JST = timezone(timedelta(hours=9))
 now = datetime.utcnow().replace(tzinfo=timezone.utc)
 today_str = now.astimezone(JST).strftime("%Y-%m-%d")
