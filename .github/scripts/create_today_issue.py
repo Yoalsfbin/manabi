@@ -4,6 +4,7 @@ import os
 
 g = Github(os.environ["GITHUB_TOKEN"])
 repo = g.get_repo(os.environ["REPO"])
+USERNAME = os.environ.get("GITHUB_USER_TO_MENTION", "")
 JST = timezone(timedelta(hours=9))
 
 today_str = datetime.now(JST).strftime("%Y-%m-%d")
