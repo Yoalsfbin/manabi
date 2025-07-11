@@ -32,6 +32,8 @@ if not checklist_lines:
 # 今日やるIssueを作成
 title = f"☀️ 今日やる復習リスト - {today_str}"
 body = "\n".join([
+    f"{USERNAME}",
+    "",
     "おはようございます！今日の復習タスクはこちらです：",
     "",
     *checklist_lines,
