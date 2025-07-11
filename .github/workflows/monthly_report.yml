@@ -1,0 +1,31 @@
+name: Monthly Learning Report
+
+on:
+  schedule:
+    # 毎月1日のJST 0:05（UTC 15:05）
+    - cron: '5 15 1 * *'  
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  monthly-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: pip install PyGithub matplotlib
+
+      - name: Run monthly report script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: python .github/scripts/create_monthly_report.py
