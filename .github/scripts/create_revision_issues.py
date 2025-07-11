@@ -12,7 +12,7 @@ now = datetime.utcnow().replace(tzinfo=timezone.utc)
 today_str = now.astimezone(JST).strftime("%Y-%m-%d")
 
 # 復習のスケジュール（作成から○日後）
-review_days = [0, 3, 7, 14, 30, 60, 90]
+review_days = [1, 3, 7, 14, 30, 60, 90]
 
 # 復習対象を日数ごとに収集
 for day in review_days:
