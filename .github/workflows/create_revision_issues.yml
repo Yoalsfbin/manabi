@@ -1,0 +1,32 @@
+name: Auto Review Issues
+
+on:
+  schedule:
+    # JST 0時（UTC 15時）
+    - cron: '0 15 * * *' 
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install PyGithub
+
+      - name: Run review script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python .github/scripts/create_revision_issues.py
