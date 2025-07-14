@@ -29,7 +29,7 @@ if editing_issues:
         editing_section_lines.append(
             f"- [#{issue.number} {issue.title}](https://github.com/{repo.full_name}/issues/{issue.number})"
         )
-    editing_section = "\n".join(editing_section_lines) + "\n\n"
+    editing_section = "\n".join(editing_section_lines) + "\n"
 
 # ================================
 # 📚 今日の復習リストを取得
@@ -42,30 +42,42 @@ for issue in issues:
         target = issue
         break
 
-if not target:
-    print("🎉 今日の復習対象はありません")
-    exit(0)
+checklist_lines = []
+if target:
+    lines = target.body.splitlines()
+    checklist_lines = [line for line in lines if line.strip().startswith("- [")]
 
-# チェックリストだけを抜き出す
-lines = target.body.splitlines()
-checklist_lines = [line for line in lines if line.strip().startswith("- [")]
-
-if not checklist_lines:
-    print("✅ チェックリストが空のためスキップ")
+# ================================
+# ✅ どちらも空ならスキップ
+# ================================
+if not checklist_lines and not editing_issues:
+    print("🎉 今日やることが何もありません")
     exit(0)
 
 # ================================
 # ☀️ 本文を組み立てて Issue 作成
 # ================================
 body_lines = [
-    "おはようございます！今日の復習タスクはこちらです：",
+    "おはようございます！今日のタスクはこちらです：",
     "",
 ]
 
 if editing_section:
     body_lines.append(editing_section)
 
-body_lines += checklist_lines
+if checklist_lines:
+    body_lines += [
+        "",
+        "📚 **今日の復習リスト**",
+        "",
+        *checklist_lines
+    ]
+else:
+    body_lines += [
+        "",
+        "📭 **今日は復習リストはありません。執筆タスクに集中しましょう！**"
+    ]
+
 body_lines.append("")
 body_lines.append("がんばっていきましょう！💪")
 
@@ -77,13 +89,15 @@ new_issue = repo.create_issue(title=title, body=body, labels=["今日"])
 
 # メンション通知コメント（状況に応じて分岐）
 if USERNAME:
-    if editing_issues:
+    if editing_issues and checklist_lines:
         new_issue.create_comment(
-            f"{USERNAME} さん、今日の復習リストが生成されました！📚\n"
-            f"現在進行中のIssueもあります。無理せずコツコツいきましょう ✏️💪"
+            f"{USERNAME} さん、今日の復習リストと執筆中のタスクがあります！📚✏️\nどちらも無理なく進めていきましょう 💪"
         )
-    else:
+    elif editing_issues:
         new_issue.create_comment(
-            f"{USERNAME} さん、今日の復習タスクが生成されました！📣\n"
-            f"今日は集中して取り組めそうです！がんばっていきましょう 💪"
+            f"{USERNAME} さん、今日は復習リストはありませんが、執筆タスクがあります！📝\n集中して取り組みましょう！"
+        )
+    elif checklist_lines:
+        new_issue.create_comment(
+            f"{USERNAME} さん、今日の復習タスクが生成されました！📣\nがんばっていきましょう！"
         )
